@@ -27,7 +27,7 @@
     }
 
     #sd {
-      height: 800vh;
+      height: 700vh;
       position: relative;
       z-index: 1;
       pointer-events: none
@@ -91,15 +91,29 @@
     }
 
     @keyframes ldOrb {
-
-      0%,
-      100% {
-        box-shadow: -10px 4px 40px rgba(60, 120, 220, .2), inset -8px -6px 18px rgba(0, 0, 0, .85)
+      0%, 100% { 
+        box-shadow: 0 0 40px rgba(60, 120, 220, .3), inset -8px -6px 18px rgba(0, 0, 0, .85);
+        transform: scale(1);
       }
-
-      50% {
-        box-shadow: 10px 4px 40px rgba(60, 120, 220, .2), inset 8px -6px 18px rgba(0, 0, 0, .85)
+      50% { 
+        box-shadow: 0 0 70px rgba(100, 160, 255, .5), inset 8px -6px 18px rgba(0, 0, 0, .85);
+        transform: scale(1.05);
       }
+    }
+
+    .ld-orb::after {
+      content: '';
+      position: absolute;
+      inset: -10px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50%;
+      border-top-color: rgba(255,255,255,0.4);
+      animation: ldRotate 2s linear infinite;
+    }
+
+    @keyframes ldRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
 
     .ld-t {
@@ -240,28 +254,79 @@
     /* ─── PROGRESS DOTS ─────────────────────────────────────────────── */
     #dots {
       position: fixed;
-      left: 26px;
+      left: 28px;
       top: 50%;
       transform: translateY(-50%);
       z-index: 200;
       display: flex;
       flex-direction: column;
-      gap: 14px
+      align-items: center; /* Fixes symmetry */
+      gap: 18px;
+      padding: 20px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(18px) saturate(140%);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.05);
+    }
+
+    .dot-wrap {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      pointer-events: auto;
     }
 
     .dot {
-      width: 4px;
-      height: 4px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, .15);
-      transition: all .5s;
-      cursor: pointer
+      background: rgba(255, 255, 255, 0.35);
+      transition: all 0.35s cubic-bezier(.2, .8, .2, 1);
     }
 
-    .dot.on {
-      background: #fff;
-      box-shadow: 0 0 6px rgba(255, 255, 255, .4)
+    .dot-wrap:hover .dot {
+      transform: scale(1.25);
+      background: rgba(255, 255, 255, 0.7);
     }
+
+    .dot-wrap.active .dot {
+      transform: scale(1.4);
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 18px rgba(255, 255, 255, 0.25);
+    }
+
+    .dot-wrap::after {
+      content: attr(data-label);
+      position: absolute;
+      left: 40px;
+      top: 50%;
+      transform: translateY(-50%) translateX(-10px);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      font-style: italic;
+      letter-spacing: 1px;
+      color: rgba(255, 255, 255, 0.55);
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+      transition: all 0.4s ease;
+    }
+
+    .dot-wrap:hover::after,
+    .dot-wrap.active::after {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
+    }
+
+    .dot-wrap:active .dot {
+      transform: scale(0.9);
+    }
+
+
 
     /* ─── SCROLL CUE ─────────────────────────────────────────────────── */
     #scrl {
@@ -631,7 +696,13 @@
       }
 
       #dots {
-        display: none
+        display: flex;
+        left: 14px;
+      }
+
+      .dot {
+        width: 14px;
+        height: 14px;
       }
 
       .hud {
@@ -639,7 +710,7 @@
       }
 
       .pt {
-        font-size: 48px
+        font-size: clamp(32px, 10vw, 72px);
       }
 
       .glass-card {
