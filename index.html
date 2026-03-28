@@ -10,6 +10,14 @@
     href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="./css/style.css">
+  
+  <!-- Preload GLB Models for faster initial delivery -->
+  <link rel="preload" href="./models/realistic_3d_earth_model_with_4k_textures.glb" as="fetch" crossorigin>
+  <link rel="preload" href="./models/mars_the_red_planet_free.glb" as="fetch" crossorigin>
+  <link rel="preload" href="./models/moon.glb" as="fetch" crossorigin>
+  <link rel="preload" href="./models/space_satellite.glb" as="fetch" crossorigin>
+  <link rel="preload" href="./models/voyager_3d_printable.glb" as="fetch" crossorigin>
+  <link rel="preload" href="./models/animated_floating_astronaut_in_space_suit_loop.glb" as="fetch" crossorigin>
 </head>
 
 <body>
@@ -183,9 +191,23 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
   <script>
     // ════════════════════════════════════════════════════════════════════
-    // LOADING BAR
+    // LOADING MANAGER & ASSET TRACKING
     // ════════════════════════════════════════════════════════════════════
-    setTimeout(() => { document.getElementById('ldf').style.width = '100%'; }, 60);
+    const manager = new THREE.LoadingManager();
+    const ldf = document.getElementById('ldf');
+    const loadingScreen = document.getElementById('ld');
+
+    manager.onProgress = (url, itemsLoaded, itemsTotal) => {
+      const progress = (itemsLoaded / itemsTotal) * 100;
+      ldf.style.width = progress + '%';
+    };
+
+    manager.onLoad = () => {
+      setTimeout(() => {
+        loadingScreen.style.opacity = '0';
+        setTimeout(() => loadingScreen.style.display = 'none', 1200);
+      }, 500);
+    };
 
     // ════════════════════════════════════════════════════════════════════
     // RENDERER & SCENE
@@ -311,7 +333,7 @@
     // ════════════════════════════════════════════════════════════════════
     const EP = new THREE.Vector3(0, 0, 0);
     const earthGroup = new THREE.Group();
-    const gltfLoader = new THREE.GLTFLoader();
+    const gltfLoader = new THREE.GLTFLoader(manager);
     let earthModel;
 
     gltfLoader.load('./models/realistic_3d_earth_model_with_4k_textures.glb', (gltf) => {
@@ -390,7 +412,19 @@
     gltfLoader.load('./models/moon.glb', (gltf) => {
       moonModel = gltf.scene;
       moonModel.scale.set(1.4, 1.4, 1.4);
-      moonModel.traverse(c => { if (c.isMesh) { if (c.material.map) c.material.map.colorSpace = THREE.SRGBColorSpace; c.material.roughness = 1.0; c.material.metalness = 0; c.material.needsUpdate = true; } });
+      moonModel.traverse(c => { 
+        if (c.isMesh) { 
+          if (c.material.map) c.material.map.colorSpace = THREE.SRGBColorSpace; 
+          // Decrease exposure/brightness of Moon
+          c.material.roughness = 1.0; 
+          c.material.metalness = 0.1; // Add subtle depth
+          if (c.material.emissive) {
+            c.material.emissive.setHex(0x222222); // Dimmer emissive base
+            c.material.emissiveIntensity = 0.4;   // Softer glow
+          }
+          c.material.needsUpdate = true; 
+        } 
+      });
       moonGroup.add(moonModel);
     }, undefined, e => console.warn('Moon GLB:', e));
 
@@ -956,14 +990,9 @@
       document.getElementById('gb-metric').textContent = distKm + 'M km traveled';
     }
 
-    // ════════════════════════════════════════════════════════════════════
-    // HIDE LOADING
-    // ════════════════════════════════════════════════════════════════════
-    setTimeout(() => {
-      const ld = document.getElementById('ld');
-      ld.style.opacity = '0';
-      setTimeout(() => ld.style.display = 'none', 1200);
-    }, 2600);
+    // Initial HUD check
+    const initialH = Math.min(Math.floor(scrollP * NS), NS - 1);
+    setHUD(0);
   </script>
 </body>
 
