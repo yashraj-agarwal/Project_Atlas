@@ -697,12 +697,14 @@
 
       #dots {
         display: flex;
-        left: 14px;
+        left: 20px;
+        gap: 12px;
+        padding: 14px 10px;
       }
 
       .dot {
-        width: 14px;
-        height: 14px;
+        width: 6px;
+        height: 6px;
       }
 
       .hud {
@@ -710,7 +712,7 @@
       }
 
       .pt {
-        font-size: clamp(32px, 10vw, 72px);
+        font-size: clamp(24px, 8vw, 48px);
       }
 
       .glass-card {
@@ -719,5 +721,9 @@
 
       #graph-box {
         display: none
+      }
+
+      #cd, #cr {
+        display: none !important;
       }
     }

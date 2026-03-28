@@ -340,8 +340,8 @@
 
       if (masterGain) {
         gsap.to(masterGain.gain, { 
-          value: soundOn ? 0.8 : 0, 
-          duration: 1.5, 
+          value: soundOn ? 0.6 : 0, 
+          duration: 2, 
           ease: "power2.inOut" 
         });
       }
@@ -370,14 +370,14 @@
       if (type === 'ping') {
         osc.frequency.setValueAtTime(880, audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.1);
-        g.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        g.gain.setValueAtTime(0.06, audioCtx.currentTime);
         g.gain.exponentialRampToValueAtTime(0.005, audioCtx.currentTime + 0.4);
         osc.start(); osc.stop(audioCtx.currentTime + 0.4);
       } else if (type === 'whoosh') {
         osc.frequency.setValueAtTime(100, audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.3);
         g.gain.setValueAtTime(0, audioCtx.currentTime);
-        g.gain.linearRampToValueAtTime(0.06, audioCtx.currentTime + 0.1);
+        g.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 0.1);
         g.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
         osc.start(); osc.stop(audioCtx.currentTime + 0.5);
         haptic(10); // Small pulse on transition
