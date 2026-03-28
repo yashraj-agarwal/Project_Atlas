@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Journey to Mars — Mission Atlas 2047</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+
+  <canvas id="c"></canvas>
+  <div class="grain"></div>
+  <div id="vignette"></div>
+
+  <div id="cd"></div>
+  <div id="cr"></div>
+
+  <div id="ld">
+    <div class="ld-orb"></div>
+    <div class="ld-t">Initializing Mission Atlas</div>
+    <div class="ld-bar">
+      <div class="ld-f" id="ldf"></div>
+    </div>
+  </div>
+
+  <nav>
+    <div class="nb">Atlas 2047 &nbsp;·&nbsp; Earth → Mars</div>
+    <div class="nr">
+      <span>225M km</span>
+      <span>7 months transit</span>
+      <span>6 crew</span>
+    </div>
+  </nav>
+
+  <div class="hud" id="hud-l">
+    <div class="hi"><span class="hl">Temp</span><span class="hv" id="hT">+15° C</span></div>
+    <div class="hi"><span class="hl">Alt</span><span class="hv" id="hA">—</span></div>
+    <div class="hi"><span class="hl">Phase</span><span class="hv" id="hP">Pre-Launch</span></div>
+  </div>
+
+  <button id="snd">
+    <span id="st">Sound On</span>
+    <div class="sp">
+      <div class="sd"></div>
+    </div>
+  </button>
+
+  <div id="dots">
+    <div class="dot on" title="Earth"></div>
+    <div class="dot" title="Launch"></div>
+    <div class="dot" title="Transit"></div>
+    <div class="dot" title="Isolation"></div>
+    <div class="dot" title="Orbit"></div>
+    <div class="dot" title="Landing"></div>
+    <div class="dot" title="Mars"></div>
+  </div>
+
+  <div id="scrl">
+    <div class="spl">
+      <div class="spi"></div>
+    </div>
+    <span class="slb">Scroll to journey</span>
+  </div>
+
+  <!-- Astronaut identity badge — floats in during deep space -->
+  <div id="astro-badge">
+    <div class="ab-label">Mission Commander</div>
+    <div class="ab-name">Cdr. A. Reyes · Atlas 2047</div>
+  </div>
+
+  <div class="dbox" id="db-e">
+    <div class="dbt">Earth — Mission Start</div>
+    <div class="dbr"><span class="dbk">Population</span><span class="dbv">8.1 Billion</span></div>
+    <div class="dbr"><span class="dbk">Radius</span><span class="dbv">6,371 km</span></div>
+    <div class="dbr"><span class="dbk">Distance to Mars</span><span class="dbv">225M km</span></div>
+    <div class="dbr"><span class="dbk">Departure</span><span class="dbv">January 2047</span></div>
+  </div>
+  <div class="dbox" id="db-m">
+    <div class="dbt">Mars — Destination</div>
+    <div class="dbr"><span class="dbk">Surface Temp</span><span class="dbv">−60° C avg</span></div>
+    <div class="dbr"><span class="dbk">Sol Length</span><span class="dbv">24h 37m</span></div>
+    <div class="dbr"><span class="dbk">Gravity</span><span class="dbv">3.72 m/s²</span></div>
+    <div class="dbr"><span class="dbk">Atmosphere</span><span class="dbv">95% CO₂</span></div>
+  </div>
+
+  <!-- ═══════════════ STORY PANELS ═════════════════════════════════════ -->
+  <div class="panel" id="p0">
+    <div class="pc">
+      <span class="pe">Mission Atlas · Year 2047</span>
+      <h1 class="pt">Journey<br><i>to Mars</i></h1>
+      <div class="pr"></div>
+      <p class="ps">225 million kilometers.<br>One crew. One destiny.<br>The next chapter of humanity begins here.</p>
+      <button class="pb" onclick="window.scrollBy({top:window.innerHeight,behavior:'smooth'})">Begin Mission</button>
+    </div>
+  </div>
+
+  <div class="panel" id="p1">
+    <div class="pc">
+      <span class="pe">Phase I · Launch Sequence</span>
+      <h2 class="pt">Ignition</h2>
+      <div class="pr"></div>
+      <p class="ps">The Ares VI launches from Kennedy Space Center. Six astronauts. One direction.<br>No turning back.
+      </p>
+    </div>
+  </div>
+
+  <div class="panel" id="p2">
+    <div class="pc">
+      <span class="pe">Phase II · Deep Space Transit</span>
+      <h2 class="pt">The<br><i>Void</i></h2>
+      <div class="pr"></div>
+      <p class="ps">Seven months at 22 km/s. The crew drifts through the absolute silence of interplanetary space.</p>
+    </div>
+  </div>
+
+  <div class="panel" id="p3">
+    <div class="pc">
+      <span class="pe">Phase III · Isolation</span>
+      <h2 class="pt"><i>No sound.</i><br>No ground.</h2>
+      <div class="pr"></div>
+      <p class="ps">There is no up. No down.<br>Only you… and the infinite.<br>And the faint memory of everything left
+        behind.</p>
+    </div>
+  </div>
+
+  <div class="panel" id="p4">
+    <div class="pc">
+      <span class="pe">Phase IV · Orbital Insertion</span>
+      <h2 class="pt">Entry<br>Protocol</h2>
+      <div class="pr"></div>
+      <p class="ps">The spacecraft decelerates into a 400 km orbit. Jezero Crater visible below — an ancient lake bed,
+        now a landing zone.</p>
+    </div>
+  </div>
+
+  <div class="panel" id="p5">
+    <div class="pc">
+      <span class="pe">Phase V · Descent & Landing</span>
+      <h2 class="pt">Touch<br><i>down.</i></h2>
+      <div class="pr"></div>
+      <p class="ps">Six humans become the first to stand on another world. Dust storms clear. Cold. Ancient. Waiting.
+      </p>
+    </div>
+  </div>
+
+  <div class="panel" id="p6">
+    <div class="pc">
+      <span class="pe">End of Journey · Mission Complete</span>
+      <h2 class="pt">Not the<br><i>end.</i></h2>
+      <div class="pr"></div>
+      <p class="ps">The beginning.</p>
+      <button class="pb"
+        onclick="(function(){var s=window.scrollY,d=4000,st=performance.now();function step(t){var p=Math.min((t-st)/d,1),e=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;window.scrollTo(0,s*(1-e));if(p<1)requestAnimationFrame(step)}requestAnimationFrame(step)})()">↑
+        Return to Earth</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ GLASSMORPHISM HOVER CARD ═══════════════════════════ -->
+  <div class="glass-card" id="glass-card">
+    <div class="gc-title" id="gc-title"></div>
+    <div class="gc-name" id="gc-name"></div>
+    <div id="gc-body"></div>
+  </div>
+
+  <!-- ═══════════════ JOURNEY GRAPH ═══════════════════════════════════ -->
+  <div id="graph-box">
+    <div class="gb-title">Mission Telemetry</div>
+    <canvas id="graph-canvas" width="380" height="140"></canvas>
+    <div class="gb-legend"><span>Earth</span><span id="gb-metric">Distance</span><span>Mars</span></div>
+  </div>
+
+  <div id="sd"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+    // ════════════════════════════════════════════════════════════════════
+    // LOADING BAR
+    // ════════════════════════════════════════════════════════════════════
+    setTimeout(() => { document.getElementById('ldf').style.width = '100%'; }, 60);
+
+    // ════════════════════════════════════════════════════════════════════
+    // RENDERER & SCENE
+    // ════════════════════════════════════════════════════════════════════
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('c'), antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x000000, 1);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.physicallyCorrectLights = true;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.6;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, .01, 800);
+
+    window.addEventListener('resize', () => {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+    });
+
+    // ════════════════════════════════════════════════════════════════════
+    // LIGHTING
+    // ════════════════════════════════════════════════════════════════════
+    const sunLight = new THREE.DirectionalLight(0xffffff, 6.5);
+    sunLight.position.set(15, 6, 12);
+    scene.add(sunLight);
+
+    const fillLight = new THREE.DirectionalLight(0x88aaff, 1.2);
+    fillLight.position.set(-10, -3, -8);
+    scene.add(fillLight);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+
+    // Mars point light — warm red glow 🔴
+    const MP = new THREE.Vector3(46, 0, 0);
+    const marsLight = new THREE.PointLight(0xff4400, 2.5, 35);
+    marsLight.position.copy(MP);
+    scene.add(marsLight);
+
+    // Mars fill light — softens the dark side
+    const marsFill = new THREE.PointLight(0xff6633, 1.2, 20);
+    marsFill.position.set(38, -2, -6);
+    scene.add(marsFill);
+
+    // Helmet/EVA suit backlight — follows astronaut each frame
+    const helmetLight = new THREE.PointLight(0xfff0d0, 0.0, 6);
+    scene.add(helmetLight);
+
+    // ════════════════════════════════════════════════════════════════════
+    // STARFIELD
+    // ════════════════════════════════════════════════════════════════════
+    function makeStars(n, rMin, rMax, colorFn, size) {
+      const geo = new THREE.BufferGeometry();
+      const pos = new Float32Array(n * 3), col = new Float32Array(n * 3);
+      for (let i = 0; i < n; i++) {
+        const th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1);
+        const r = rMin + Math.random() * (rMax - rMin);
+        pos[i * 3] = r * Math.sin(ph) * Math.cos(th);
+        pos[i * 3 + 1] = r * Math.sin(ph) * Math.sin(th);
+        pos[i * 3 + 2] = r * Math.cos(ph);
+        const c = colorFn(Math.random());
+        col[i * 3] = c[0]; col[i * 3 + 1] = c[1]; col[i * 3 + 2] = c[2];
+      }
+      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+      scene.add(new THREE.Points(geo, new THREE.PointsMaterial({
+        size, vertexColors: true, transparent: true, opacity: .92, sizeAttenuation: true
+      })));
+    }
+    makeStars(12000, 300, 600, r => r < .08 ? [.6, .72, 1] : r < .14 ? [1, .87, .62] : [1, 1, 1], .85);
+
+    // Milky Way band
+    (() => {
+      const geo = new THREE.BufferGeometry(), n = 4000;
+      const pos = new Float32Array(n * 3), col = new Float32Array(n * 3);
+      for (let i = 0; i < n; i++) {
+        const th = Math.random() * Math.PI * 2, ph = (Math.random() - .5) * .28, r = 320 + Math.random() * 120;
+        pos[i * 3] = r * Math.cos(ph) * Math.cos(th);
+        pos[i * 3 + 1] = r * Math.sin(ph);
+        pos[i * 3 + 2] = r * Math.cos(ph) * Math.sin(th);
+        col[i * 3] = .7; col[i * 3 + 1] = .8; col[i * 3 + 2] = 1;
+      }
+      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+      scene.add(new THREE.Points(geo, new THREE.PointsMaterial({
+        size: .55, vertexColors: true, transparent: true, opacity: .14, sizeAttenuation: true
+      })));
+    })();
+
+    // ════════════════════════════════════════════════════════════════════
+    // TRAJECTORY LINE — subtle dashed path Earth → Mars
+    // ════════════════════════════════════════════════════════════════════
+    const trajGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0, 0, 0), new THREE.Vector3(46, 0, 0)
+    ]);
+    const trajLine = new THREE.Line(trajGeo, new THREE.LineDashedMaterial({
+      color: 0xffffff, dashSize: 0.4, gapSize: 1.2, transparent: true, opacity: 0.06
+    }));
+    trajLine.computeLineDistances();
+    scene.add(trajLine);
+
+    // ════════════════════════════════════════════════════════════════════
+    // ATMOSPHERE SHADER
+    // ════════════════════════════════════════════════════════════════════
+    const ATMO_V = `varying vec3 vNormal;void main(){vNormal=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`;
+    const ATMO_F = `uniform vec3 glowColor;uniform float power;varying vec3 vNormal;void main(){float d=dot(vNormal,vec3(0,0,1));float i=pow(clamp(0.65-d,0.0,1.0),power);gl_FragColor=vec4(glowColor,1.0)*i;}`;
+    function makeAtmo(r, color, pwr = 2.6) {
+      return new THREE.Mesh(
+        new THREE.SphereGeometry(r, 36, 36),
+        new THREE.ShaderMaterial({
+          uniforms: { glowColor: { value: new THREE.Color(color) }, power: { value: pwr } },
+          vertexShader: ATMO_V, fragmentShader: ATMO_F,
+          side: THREE.BackSide, blending: THREE.AdditiveBlending,
+          transparent: true, depthWrite: false
+        })
+      );
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    // EARTH (GLB)
+    // ════════════════════════════════════════════════════════════════════
+    const EP = new THREE.Vector3(0, 0, 0);
+    const earthGroup = new THREE.Group();
+    const gltfLoader = new THREE.GLTFLoader();
+    let earthModel;
+
+    gltfLoader.load('./realistic_3d_earth_model_with_4k_textures.glb', (gltf) => {
+      earthModel = gltf.scene;
+      earthModel.scale.set(1.4, 1.4, 1.4);
+      earthModel.rotation.z = 0.41;
+      earthModel.traverse((child) => {
+        if (child.isMesh) {
+          if (child.material.map) child.material.map.colorSpace = THREE.SRGBColorSpace;
+          child.material.roughness = 1; child.material.metalness = 0;
+          child.material.needsUpdate = true;
+        }
+      });
+      earthGroup.add(earthModel);
+    });
+    earthGroup.add(makeAtmo(2.3, 0x3399ee, 1.8));
+    earthGroup.add(makeAtmo(2.1, 0x66bbff, 2.6));
+    earthGroup.position.copy(EP);
+    scene.add(earthGroup);
+
+    // ════════════════════════════════════════════════════════════════════
+    // MARS (GLB)
+    // ════════════════════════════════════════════════════════════════════
+    const marsGroup = new THREE.Group();
+    let marsModel;
+
+    gltfLoader.load('./mars_the_red_planet_free.glb', (gltf) => {
+      marsModel = gltf.scene;
+      marsModel.scale.set(1.1, 1.1, 1.1);
+      marsModel.traverse((child) => {
+        if (child.isMesh) {
+          if (child.material.map) child.material.map.colorSpace = THREE.SRGBColorSpace;
+          child.material.roughness = 1; child.material.metalness = 0;
+          child.material.needsUpdate = true;
+        }
+      });
+      marsGroup.add(marsModel);
+    }, undefined, (err) => console.error('Mars GLB failed:', err));
+
+    marsGroup.add(makeAtmo(1.9, 0xaa3505, 3.0));
+    marsGroup.add(makeAtmo(2.05, 0x661800, 2.2));
+
+    (() => {
+      const geo = new THREE.BufferGeometry(), n = 1200, pos = new Float32Array(n * 3);
+      for (let i = 0; i < n; i++) {
+        const th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1), r = 1.95 + Math.random() * .7;
+        pos[i * 3] = r * Math.sin(ph) * Math.cos(th); pos[i * 3 + 1] = r * Math.sin(ph) * Math.sin(th); pos[i * 3 + 2] = r * Math.cos(ph);
+      }
+      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      marsGroup.add(new THREE.Points(geo, new THREE.PointsMaterial({ size: .04, color: 0xaa4010, transparent: true, opacity: .32, sizeAttenuation: true })));
+    })();
+    marsGroup.position.copy(MP);
+    scene.add(marsGroup);
+
+    // ════════════════════════════════════════════════════════════════════
+    // ASTEROID DEBRIS
+    // ════════════════════════════════════════════════════════════════════
+    (() => {
+      const geo = new THREE.BufferGeometry(), n = 1400, pos = new Float32Array(n * 3);
+      for (let i = 0; i < n; i++) {
+        pos[i * 3] = 7 + Math.random() * 36; pos[i * 3 + 1] = (Math.random() - .5) * 22; pos[i * 3 + 2] = (Math.random() - .5) * 22;
+      }
+      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      scene.add(new THREE.Points(geo, new THREE.PointsMaterial({ size: .072, color: 0x7a8a99, transparent: true, opacity: .4, sizeAttenuation: true })));
+    })();
+    // ════════════════════════════════════════════════════════════════════
+    // MOON (GLB) — orbits Earth
+    // ════════════════════════════════════════════════════════════════════
+    const moonOrbit = new THREE.Group();
+    moonOrbit.position.copy(EP);
+    scene.add(moonOrbit);
+    const moonGroup = new THREE.Group();
+    moonGroup.position.set(3.2, 0.3, 0);
+    moonOrbit.add(moonGroup);
+    let moonModel = null;
+    gltfLoader.load('./moon.glb', (gltf) => {
+      moonModel = gltf.scene;
+      moonModel.scale.set(1.4, 1.4, 1.4);
+      moonModel.traverse(c => { if (c.isMesh) { if (c.material.map) c.material.map.colorSpace = THREE.SRGBColorSpace; c.material.roughness = 1.0; c.material.metalness = 0; c.material.needsUpdate = true; } });
+      moonGroup.add(moonModel);
+    }, undefined, e => console.warn('Moon GLB:', e));
+
+    // ════════════════════════════════════════════════════════════════════
+    // SATELLITE (GLB) — orbits Earth
+    // ════════════════════════════════════════════════════════════════════
+    const satOrbit = new THREE.Group();
+    satOrbit.position.copy(EP);
+    scene.add(satOrbit);
+    const satGroup = new THREE.Group();
+    satGroup.position.set(2.8, 0.5, 1.2);
+    satOrbit.add(satGroup);
+    let satModel = null;
+    gltfLoader.load('./space_satellite.glb', (gltf) => {
+      satModel = gltf.scene;
+      satModel.scale.set(0.12, 0.12, 0.12);
+      satModel.traverse(c => { if (c.isMesh) { if (c.material.map) c.material.map.colorSpace = THREE.SRGBColorSpace; c.material.needsUpdate = true; } });
+      satGroup.add(satModel);
+    }, undefined, e => console.warn('Satellite GLB:', e));
+
+    // ════════════════════════════════════════════════════════════════════
+    // VOYAGER (GLB) — orbits Earth
+    // ════════════════════════════════════════════════════════════════════
+    const voyOrbit = new THREE.Group();
+    voyOrbit.position.copy(EP);
+    scene.add(voyOrbit);
+    const voyGroup = new THREE.Group();
+    voyGroup.position.set(-1.5, 1.2, 3.0);
+    voyOrbit.add(voyGroup);
+    let voyModel = null;
+    gltfLoader.load('./voyager_3d_printable.glb', (gltf) => {
+      voyModel = gltf.scene;
+      voyModel.scale.set(0.006, 0.006, 0.006);
+      voyModel.traverse(c => { if (c.isMesh) { if (c.material.map) c.material.map.colorSpace = THREE.SRGBColorSpace; c.material.needsUpdate = true; } });
+      voyGroup.add(voyModel);
+    }, undefined, e => console.warn('Voyager GLB:', e));
+
+    // ════════════════════════════════════════════════════════════════════
+    // ★  ASTRONAUT  — cinematic story character
+    // ════════════════════════════════════════════════════════════════════
+    //
+    //  ┌──────────────────────────────────────────────────────────────────┐
+    //  │  QUICK TUNING                                                    │
+    //  │  ASTRO_SCALE  → change if astronaut appears too big/small        │
+    //  │  ASTRO_BASE_Y → adjust if astronaut faces the wrong direction    │
+    //  │  ASTRO_WP     → world-space position per scroll section          │
+    //  │  ASTRO_ROT_Y  → body-facing angle per section (radians)          │
+    //  └──────────────────────────────────────────────────────────────────┘
+
+    const ASTRO_SCALE = 0.42;    // artistic scale — tweak freely
+    const ASTRO_BASE_Y = Math.PI; // most GLBs face -Z; flip 180° to face camera
+
+    // Seven world-space waypoints (one per scroll section).
+    // Astronaut is offset to the RIGHT THIRD of each camera framing.
+    const ASTRO_WP = [
+      new THREE.Vector3(0.6, -1.2, 2.8),  // 0 Pre-launch   floating near Earth, fully in frame
+      new THREE.Vector3(2.2, 0.6, 4.8),  // 1 Ignition     pushed back by launch
+      new THREE.Vector3(16.0, 1.4, 7.2),  // 2 The Void     adrift in deep space
+      new THREE.Vector3(25.0, 0.6, 5.8),  // 3 Isolation    still, almost motionless
+      new THREE.Vector3(39.5, 1.2, 3.4),  // 4 Orbital      facing Mars
+      new THREE.Vector3(42.8, -0.4, 2.6),  // 5 Descent      angled downward
+      new THREE.Vector3(43.5, 1.8, 9.5),  // 6 Arrival      framed against Mars
+    ];
+
+    // Target rotation.y per section — tune with ASTRO_BASE_Y if model is mirrored
+    const ASTRO_ROT_Y = [
+      Math.PI * 1.05,  // 0 gazing at Earth
+      Math.PI * 1.10,  // 1 thrust direction
+      Math.PI * 0.92,  // 2 adrift, slight yaw
+      Math.PI * 0.55,  // 3 beginning to turn toward Mars
+      0.05,            // 4 facing Mars
+      -0.20,            // 5 descent tilt
+      0.15,            // 6 surveying the surface
+    ];
+
+    const astronautGroup = new THREE.Group();
+    let astronautModel = null;
+    let astronautReady = false;
+
+    gltfLoader.load(
+      './animated_floating_astronaut_in_space_suit_loop.glb',
+      (gltf) => {
+        astronautModel = gltf.scene;
+        astronautModel.scale.set(ASTRO_SCALE, ASTRO_SCALE, ASTRO_SCALE);
+        astronautModel.rotation.y = ASTRO_BASE_Y;
+
+        astronautModel.traverse((child) => {
+          if (child.isMesh) {
+            // Preserve full PBR (visor reflectance, suit metalness) — only fix colorspace
+            if (child.material.map) child.material.map.colorSpace = THREE.SRGBColorSpace;
+            if (child.material.emissiveMap) child.material.emissiveMap.colorSpace = THREE.SRGBColorSpace;
+            if (child.material.normalMap) child.material.normalMap.colorSpace = THREE.LinearSRGBColorSpace;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        astronautGroup.add(astronautModel);
+        astronautReady = true;
+      },
+      undefined,
+      (err) => console.error('Astronaut GLB failed to load:', err)
+    );
+
+    astronautGroup.position.copy(ASTRO_WP[0]);
+    scene.add(astronautGroup);
+
+    // ════════════════════════════════════════════════════════════════════
+    // GSAP SCROLL-DRIVEN CAMERA
+    // ════════════════════════════════════════════════════════════════════
+    gsap.registerPlugin(ScrollTrigger);
+
+    const cam = { px: 0.4, py: -2.0, pz: 3.6, lx: 0, ly: 0, lz: 0, fov: 55 };
+
+    const TEMPS = ['+15° C', '+12° C', '−270° C', '−270° C', '−80° C', '−60° C', '−55° C'];
+    const ALTS = ['400 km', '2,000 km', '—', '—', '400 km', '120 km', 'Surface'];
+    const PHASES = ['Pre-Launch', 'Launch', 'Deep Transit', 'Isolation', 'Orbital Insertion', 'Descent', 'On Mars'];
+    const FW = 0.028;
+    const NS = 7;
+    const SEG = 1 / NS;
+    const pIDs = ['p0', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6'];
+    const dots = document.querySelectorAll('.dot');
+
+    let scrollP = 0; // shared with render loop
+
+    function setHUD(p) {
+      scrollP = p;
+      const si = Math.min(Math.floor(p * NS), NS - 1);
+      document.getElementById('hT').textContent = TEMPS[si];
+      document.getElementById('hA').textContent = ALTS[si];
+      document.getElementById('hP').textContent = PHASES[si];
+
+      // Data boxes
+      document.getElementById('db-e').style.opacity = p < .13 ? 1 : p < .16 ? (0.16 - p) / .03 : 0;
+      document.getElementById('db-m').style.opacity = p > .52 ? Math.min(1, (p - .52) / .04) : 0;
+
+      // Scroll cue
+      if (p > .05) document.getElementById('scrl').classList.add('gone');
+
+      // Nav dots
+      dots.forEach((d, i) => d.classList.toggle('on', i === si));
+
+      // Panel fade in/out
+      pIDs.forEach((id, i) => {
+        const s = i * SEG, e = (i + 1) * SEG;
+        let op = 0;
+        if (p >= s && p < e) {
+          op = Math.min(Math.min(1, (p - s) / FW), Math.min(1, (e - p) / FW));
+        }
+        if (i === 0 && p < FW) op = 1;
+        document.getElementById(id).style.opacity = op;
+      });
+
+      // ── Vignette: deep-space isolation (sections 2–3) ─────────────────
+      let vOp = 0;
+      if (p > 0.27 && p < 0.59) {
+        const fi = Math.min(1, (p - 0.27) / 0.06);
+        const fo = Math.min(1, (0.59 - p) / 0.06);
+        vOp = Math.min(fi, fo) * 0.70;
+      }
+      document.getElementById('vignette').style.opacity = vOp;
+
+      // ── Astronaut badge: shown in deep space ──────────────────────────
+      let abOp = 0;
+      if (p > 0.31 && p < 0.54) {
+        const fi = Math.min(1, (p - 0.31) / 0.04);
+        const fo = Math.min(1, (0.54 - p) / 0.04);
+        abOp = Math.min(fi, fo) * 0.90;
+      }
+      document.getElementById('astro-badge').style.opacity = abOp;
+
+      // Background warm tint near Mars
+      const rc = p > .45 ? Math.min(1, (p - .45) / .3) * .012 : 0;
+      renderer.setClearColor(new THREE.Color(rc * .6, rc * .18, 0), 1);
+    }
+
+    const D = 14;
+    const camTL = gsap.timeline({
+      scrollTrigger: {
+        trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: 3.5,
+        onUpdate(self) { setHUD(self.progress); }
+      }
+    });
+    camTL
+      .to(cam, { px: -0.5, py: 1.8, pz: 6.8, lx: 0, ly: 0, lz: 0, ease: 'power1.inOut', duration: D })
+      .to(cam, { px: 1.5, py: 3.2, pz: 11.0, ease: 'power1.inOut', duration: D })
+      .to(cam, { px: 14, py: 1.2, pz: 8.5, lx: 46, ly: 0, lz: 0, ease: 'none', duration: D })
+      .to(cam, { px: 30, py: 2.5, pz: 6.5, ease: 'power1.inOut', duration: D })
+      .to(cam, { px: 39, py: 1.8, pz: 4.8, ease: 'power1.inOut', duration: D })
+      .to(cam, { px: 42.5, py: -0.8, pz: 3.4, fov: 46, ease: 'power2.in', duration: D })
+      .to(cam, { px: 36, py: 5.5, pz: 12, fov: 56, lx: 46, ly: 0, lz: 0, ease: 'power2.out', duration: D });
+
+    document.getElementById('p0').style.opacity = '1';
+    document.getElementById('db-e').style.opacity = '1';
+
+    // ════════════════════════════════════════════════════════════════════
+    // MOUSE
+    // ════════════════════════════════════════════════════════════════════
+    let mxR = 0, myR = 0, mxS = 0, myS = 0;
+    document.addEventListener('mousemove', e => {
+      mxR = e.clientX / window.innerWidth - .5;
+      myR = e.clientY / window.innerHeight - .5;
+    });
+
+    // ════════════════════════════════════════════════════════════════════
+    // LAUNCH SHAKE
+    // ════════════════════════════════════════════════════════════════════
+    let shakeX = 0, shakeZ = 0;
+
+    // ════════════════════════════════════════════════════════════════════
+    // ★  ASTRONAUT ANIMATION SYSTEM
+    // ════════════════════════════════════════════════════════════════════
+    const _tv = new THREE.Vector3(); // reusable temp vector
+
+    function updateAstronaut(t, p) {
+      if (!astronautReady) return;
+
+      const section = Math.min(Math.floor(p * NS), NS - 1);
+      const secFrac = (p - section * SEG) / SEG; // 0 → 1 within section
+      const nextSec = Math.min(section + 1, NS - 1);
+
+      // ── 1. TARGET POSITION — lerp between waypoints ──────────────────
+      const eSF = secFrac * secFrac * (3 - 2 * secFrac); // smoothstep
+      _tv.lerpVectors(ASTRO_WP[section], ASTRO_WP[nextSec], eSF);
+
+      // ── 2. FLOATING / DRIFT — phase-specific ─────────────────────────
+      if (section === 0) {
+        // Pre-launch: barely moves — dignified stillness
+        _tv.y += Math.sin(t * 0.20) * 0.035;
+
+      } else if (section === 1) {
+        // Ignition: gentle upward push
+        _tv.y += Math.sin(t * 1.8) * 0.025 * Math.max(0, 1 - secFrac * 2);
+        _tv.x += Math.cos(t * 2.5) * 0.012 * Math.max(0, 1 - secFrac * 2);
+
+      } else if (section === 2 || section === 3) {
+        // Deep space / isolation: slow, languid zero-g drift
+        _tv.y += Math.sin(t * 0.30) * 0.16;
+        _tv.z += Math.sin(t * 0.15) * 0.09;
+
+      } else {
+        // Approach, descent, Mars: settling down
+        _tv.y += Math.sin(t * 0.35) * 0.07;
+      }
+
+      // ── 3. LERP POSITION (camera-lag feel) ───────────────────────────
+      const lSpd = (section === 2 || section === 3) ? 0.018 : 0.035;
+      astronautGroup.position.lerp(_tv, lSpd);
+
+      // ── 4. BODY ROTATION — smooth turn toward section target ─────────
+      const targetY = ASTRO_ROT_Y[section] + ASTRO_BASE_Y;
+      astronautGroup.rotation.y += (targetY - astronautGroup.rotation.y) * 0.030;
+
+      // Body roll in deep space — slow Z oscillation
+      if (section === 2 || section === 3) {
+        const rollTarget = Math.sin(t * 0.22) * 0.09;
+        astronautGroup.rotation.z += (rollTarget - astronautGroup.rotation.z) * 0.035;
+        astronautGroup.rotation.x = Math.sin(t * 0.17) * 0.04;
+      } else {
+        // Dampen back to upright outside deep space
+        astronautGroup.rotation.z *= 0.94;
+        astronautGroup.rotation.x *= 0.94;
+      }
+
+      // ── 5. MOUSE INFLUENCE — "you are present with them" ─────────────
+      // Stronger in the void sections; subtle elsewhere
+      const mInfluence = (section >= 2 && section <= 4) ? 0.018 : 0.007;
+      astronautGroup.rotation.y += mxS * mInfluence;
+
+      // ── 6. HELMET LIGHT follows astronaut ────────────────────────────
+      helmetLight.position.copy(astronautGroup.position);
+      helmetLight.position.y += 0.28; // approx helmet offset
+      // Fade in with astronaut visibility; brighten in isolation
+      const baseVis = Math.min(1, p / 0.06);
+      const isoBoost = (section === 2 || section === 3) ? 1.4 : 1.0;
+      helmetLight.intensity = baseVis * 0.80 * isoBoost;
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    // RENDER LOOP
+    // ════════════════════════════════════════════════════════════════════
+    const clock = new THREE.Clock();
+    const lookPt = new THREE.Vector3();
+    const gboxEl = document.getElementById('graph-box'); // cache outside loop
+    let frameCount = 0;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      frameCount++;
+      const t = clock.getElapsedTime();
+      const p = scrollP;
+
+      // Mouse smoothing
+      mxS += (mxR - mxS) * .055;
+      myS += (myR - myS) * .055;
+
+      // Planet rotations
+      if (earthModel) earthModel.rotation.y += 0.001;
+      if (marsModel) marsModel.rotation.y += 0.0012;
+      earthGroup.rotation.z = Math.sin(t * .04) * .004;
+
+      // Orbit rotations — synced with Earth
+      moonOrbit.rotation.y = t * 0.08;
+      satOrbit.rotation.y = t * 0.22;
+      voyOrbit.rotation.y = t * 0.14;
+
+      // ── Launch shake — active during section 1 ────────────────────────
+      const section = Math.min(Math.floor(p * NS), NS - 1);
+      if (section === 1) {
+        const secFrac = (p - SEG) / SEG;
+        const shakeDecay = Math.max(0, 1 - secFrac * 1.8);
+        shakeX = Math.sin(t * 23.0) * 0.008 * shakeDecay;
+        shakeZ = Math.cos(t * 18.5) * 0.005 * shakeDecay;
+      } else {
+        shakeX *= 0.87; shakeZ *= 0.87; // decay after launch
+      }
+
+      // Astronaut
+      updateAstronaut(t, p);
+
+      // ── Camera (GSAP + parallax + shake) ─────────────────────────────
+      const PAR = .14;
+      camera.position.set(cam.px + mxS * PAR + shakeX, cam.py - myS * PAR * .6, cam.pz + shakeZ);
+      lookPt.set(cam.lx, cam.ly, cam.lz);
+      camera.lookAt(lookPt);
+      camera.fov = cam.fov;
+      camera.updateProjectionMatrix();
+
+      // Raycasting for hover — throttled to every 3rd frame
+      if (hoverEnabled && frameCount % 3 === 0) updateHover();
+
+      // Graph visibility — throttled to every 2nd frame
+      if (frameCount % 2 === 0) {
+        gboxEl.style.opacity = (p > 0.08 && p < 0.88) ? Math.min(1, (p - 0.08) / 0.04) : (p >= 0.88 ? Math.max(0, 1 - (p - 0.88) / 0.04) : 0);
+        drawGraph(p);
+      }
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // ════════════════════════════════════════════════════════════════════
+    // CURSOR
+    // ════════════════════════════════════════════════════════════════════
+    const cdEl = document.getElementById('cd'), crEl = document.getElementById('cr');
+    let cx = window.innerWidth / 2, cy = window.innerHeight / 2, rx = cx, ry = cy;
+    document.addEventListener('mousemove', e => { cx = e.clientX; cy = e.clientY; });
+    (function loop() {
+      rx += (cx - rx) * .1; ry += (cy - ry) * .1;
+      cdEl.style.left = cx + 'px'; cdEl.style.top = cy + 'px';
+      crEl.style.left = rx + 'px'; crEl.style.top = ry + 'px';
+      requestAnimationFrame(loop);
+    })();
+    document.querySelectorAll('button,.dot,.pb').forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('h'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('h'));
+    });
+
+    // ════════════════════════════════════════════════════════════════════
+    // SOUND TOGGLE
+    // ════════════════════════════════════════════════════════════════════
+    document.getElementById('snd').addEventListener('click', function () {
+      this.classList.toggle('off');
+      document.getElementById('st').textContent = this.classList.contains('off') ? 'Sound Off' : 'Sound On';
+    });
+
+    // ════════════════════════════════════════════════════════════════════
+    // RAYCASTING HOVER + GLASSMORPHISM CARDS (desktop only)
+    // ════════════════════════════════════════════════════════════════════
+    var hoverEnabled = window.innerWidth > 768;
+    const raycaster = new THREE.Raycaster();
+    const mouse2D = new THREE.Vector2(-9, -9);
+    let hoveredObj = null;
+    let hoverScaleTargets = new Map();
+    const gcEl = document.getElementById('glass-card');
+    const gcTitle = document.getElementById('gc-title');
+    const gcName = document.getElementById('gc-name');
+    const gcBody = document.getElementById('gc-body');
+
+    // Store default HUD values
+    let hudOverride = false;
+
+    const CARD_DATA = {
+      astronaut: {
+        title: 'Crew · Commander', name: 'Cdr. A. Reyes',
+        rows: [['Status', 'Active'], ['Heart Rate', '82 bpm'], ['Suit Temp', '+21°C'], ['O₂ Level', '96%']],
+        quote: '"Silence is louder than anything I\u0027ve ever heard."'
+      },
+      earth: {
+        title: 'Planet', name: 'Earth',
+        rows: [['Distance', '0 km'], ['Gravity', '9.8 m/s²'], ['Population', '8.1 Billion'], ['Radius', '6,371 km']],
+        quote: null
+      },
+      mars: {
+        title: 'Destination', name: 'Mars',
+        rows: [['Surface Temp', '−60°C avg'], ['Gravity', '3.72 m/s²'], ['Atmosphere', '95% CO₂'], ['Sol Length', '24h 37m']],
+        quote: null
+      },
+      moon: {
+        title: 'Natural Satellite', name: 'Moon',
+        rows: [['Orbit', '384,400 km'], ['Radius', '1,737 km'], ['Gravity', '1.62 m/s²'], ['Phase', 'Waning Gibbous']],
+        quote: null
+      },
+      satellite: {
+        title: 'Relay Station', name: 'Satellite A12',
+        rows: [['Status', 'Operational'], ['Signal Delay', '1.3s'], ['Frequency', '8.4 GHz'], ['Orbit', 'LEO 420 km']],
+        quote: null
+      },
+      voyager: {
+        title: 'Deep Space Probe', name: 'Voyager I',
+        rows: [['Status', 'Active'], ['Signal Delay', '22h 35m'], ['Distance', '24.1 Billion km'], ['Power', '~250W RTG']],
+        quote: null
+      }
+    };
+
+    function getObjKey(obj) {
+      if (!obj) return null;
+      let p = obj;
+      while (p) {
+        if (p === astronautGroup) return 'astronaut';
+        if (p === earthGroup) return 'earth';
+        if (p === marsGroup) return 'mars';
+        if (p === moonGroup || p === moonOrbit) return 'moon';
+        if (p === satGroup || p === satOrbit) return 'satellite';
+        if (p === voyGroup || p === voyOrbit) return 'voyager';
+        p = p.parent;
+      }
+      return null;
+    }
+
+    function showCard(key) {
+      const d = CARD_DATA[key];
+      if (!d) return;
+      gcTitle.textContent = d.title;
+      gcName.textContent = d.name;
+      let html = '';
+      d.rows.forEach(r => { html += `<div class="gc-row"><span class="gc-key">${r[0]}</span><span class="gc-val">${r[1]}</span></div>`; });
+      if (d.quote) html += `<div class="gc-quote">${d.quote}</div>`;
+      gcBody.innerHTML = html;
+      gcEl.classList.add('show');
+    }
+
+    function hideCard() {
+      gcEl.classList.remove('show');
+    }
+
+    // Mouse tracking for card position
+    document.addEventListener('mousemove', e => {
+      if (!hoverEnabled) return;
+      mouse2D.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse2D.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      // Position card
+      const cardX = Math.min(e.clientX + 20, window.innerWidth - 300);
+      const cardY = Math.min(e.clientY + 20, window.innerHeight - 250);
+      gcEl.style.left = cardX + 'px';
+      gcEl.style.top = cardY + 'px';
+    });
+
+    const interactiveTargets = [earthGroup, marsGroup, astronautGroup, moonGroup, satGroup, voyGroup];
+
+    function updateHover() {
+      raycaster.setFromCamera(mouse2D, camera);
+      const intersects = raycaster.intersectObjects(interactiveTargets, true);
+
+      if (intersects.length > 0) {
+        const hit = intersects[0].object;
+        const key = getObjKey(hit);
+
+        if (key && key !== hoveredObj) {
+          hoveredObj = key;
+          showCard(key);
+          document.body.classList.add('h');
+
+          // HUD override
+          if (key === 'astronaut') {
+            hudOverride = true;
+            document.getElementById('hP').textContent = 'Crew Status';
+            document.getElementById('hT').textContent = 'Suit: +21°C';
+            document.getElementById('hA').textContent = 'Drifting';
+          } else if (key === 'mars') {
+            hudOverride = true;
+            document.getElementById('hP').textContent = 'Target Lock';
+            document.getElementById('hT').textContent = '−60°C';
+            document.getElementById('hA').textContent = 'Entry Vel: 5.4 km/s';
+          }
+        }
+      } else {
+        if (hoveredObj) {
+          hoveredObj = null;
+          hideCard();
+          document.body.classList.remove('h');
+          // Restore HUD
+          if (hudOverride) {
+            hudOverride = false;
+            const si = Math.min(Math.floor(scrollP * NS), NS - 1);
+            document.getElementById('hT').textContent = TEMPS[si];
+            document.getElementById('hA').textContent = ALTS[si];
+            document.getElementById('hP').textContent = PHASES[si];
+          }
+        }
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    // JOURNEY GRAPH — scroll-linked telemetry
+    // ════════════════════════════════════════════════════════════════════
+    var graphCanvas = document.getElementById('graph-canvas');
+    var gCtx = graphCanvas ? graphCanvas.getContext('2d') : null;
+
+    function drawGraph(p) {
+      if (!gCtx) return;
+      const W = graphCanvas.width, H = graphCanvas.height;
+      gCtx.clearRect(0, 0, W, H);
+
+      // Gradient background
+      const grad = gCtx.createLinearGradient(0, 0, W, 0);
+      grad.addColorStop(0, 'rgba(34, 119, 204, 0.15)');
+      grad.addColorStop(1, 'rgba(170, 53, 5, 0.15)');
+      gCtx.fillStyle = grad;
+      gCtx.fillRect(0, 0, W, H);
+
+      // Distance curve
+      gCtx.beginPath();
+      gCtx.strokeStyle = 'rgba(255,255,255,0.35)';
+      gCtx.lineWidth = 1.5;
+      for (let i = 0; i <= 50; i++) {
+        const x = (i / 50) * W;
+        const t = i / 50;
+        const y = H - 10 - (Math.pow(t, 0.7) * (H - 20));
+        i === 0 ? gCtx.moveTo(x, y) : gCtx.lineTo(x, y);
+      }
+      gCtx.stroke();
+
+      // Speed curve
+      gCtx.beginPath();
+      gCtx.strokeStyle = 'rgba(255, 120, 50, 0.4)';
+      gCtx.lineWidth = 1;
+      for (let i = 0; i <= 50; i++) {
+        const x = (i / 50) * W;
+        const t = i / 50;
+        const speed = t < 0.15 ? t / 0.15 : (t > 0.8 ? 1 - (t - 0.8) / 0.2 : 1);
+        const y = H - 10 - (speed * (H - 30) * 0.7);
+        i === 0 ? gCtx.moveTo(x, y) : gCtx.lineTo(x, y);
+      }
+      gCtx.stroke();
+
+      // Progress marker
+      const px = p * W;
+      gCtx.beginPath();
+      gCtx.strokeStyle = 'rgba(255,255,255,0.5)';
+      gCtx.setLineDash([3, 3]);
+      gCtx.moveTo(px, 0);
+      gCtx.lineTo(px, H);
+      gCtx.stroke();
+      gCtx.setLineDash([]);
+
+      // Dot at current position
+      gCtx.beginPath();
+      gCtx.fillStyle = '#fff';
+      gCtx.arc(px, H - 10 - (Math.pow(p, 0.7) * (H - 20)), 3, 0, Math.PI * 2);
+      gCtx.fill();
+
+      // Label
+      const distKm = Math.round(p * 225);
+      document.getElementById('gb-metric').textContent = distKm + 'M km traveled';
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    // HIDE LOADING
+    // ════════════════════════════════════════════════════════════════════
+    setTimeout(() => {
+      const ld = document.getElementById('ld');
+      ld.style.opacity = '0';
+      setTimeout(() => ld.style.display = 'none', 1200);
+    }, 2600);
+  </script>
+</body>
+
+</html>

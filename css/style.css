@@ -1,0 +1,652 @@
+*,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    html {
+      scroll-behavior: auto
+    }
+
+    body {
+      background: #000;
+      overflow-x: hidden;
+      cursor: none;
+      font-family: 'DM Mono', monospace
+    }
+
+    #c {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0
+    }
+
+    #sd {
+      height: 800vh;
+      position: relative;
+      z-index: 1;
+      pointer-events: none
+    }
+
+    /* ─── CURSOR ─────────────────────────────────────────────────────── */
+    #cd {
+      position: fixed;
+      width: 5px;
+      height: 5px;
+      background: #fff;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%)
+    }
+
+    #cr {
+      position: fixed;
+      width: 28px;
+      height: 28px;
+      border: 1px solid rgba(255, 255, 255, .28);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width .3s cubic-bezier(.23, 1, .32, 1), height .3s cubic-bezier(.23, 1, .32, 1), border-color .3s
+    }
+
+    body.h #cr {
+      width: 50px;
+      height: 50px;
+      border-color: rgba(255, 255, 255, .5)
+    }
+
+    body.h #cd {
+      opacity: 0
+    }
+
+    /* ─── LOADING ────────────────────────────────────────────────────── */
+    #ld {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 8000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 1.2s
+    }
+
+    .ld-orb {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #1a3875 0%, #060d22 70%);
+      box-shadow: 0 0 40px rgba(60, 120, 220, .2);
+      margin-bottom: 32px;
+      animation: ldOrb 3s ease-in-out infinite
+    }
+
+    @keyframes ldOrb {
+
+      0%,
+      100% {
+        box-shadow: -10px 4px 40px rgba(60, 120, 220, .2), inset -8px -6px 18px rgba(0, 0, 0, .85)
+      }
+
+      50% {
+        box-shadow: 10px 4px 40px rgba(60, 120, 220, .2), inset 8px -6px 18px rgba(0, 0, 0, .85)
+      }
+    }
+
+    .ld-t {
+      font-size: 8px;
+      letter-spacing: 7px;
+      color: rgba(255, 255, 255, .25);
+      text-transform: uppercase;
+      margin-bottom: 24px
+    }
+
+    .ld-bar {
+      width: 160px;
+      height: 1px;
+      background: rgba(255, 255, 255, .06)
+    }
+
+    .ld-f {
+      height: 100%;
+      background: rgba(255, 255, 255, .4);
+      width: 0;
+      transition: width 2.2s cubic-bezier(.2, 0, .8, 1)
+    }
+
+    /* ─── NAV ────────────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      padding: 26px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center
+    }
+
+    .nb {
+      font-size: 10px;
+      letter-spacing: 4px;
+      color: rgba(255, 255, 255, .4);
+      text-transform: uppercase
+    }
+
+    .nr {
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: rgba(255, 255, 255, .2);
+      display: flex;
+      gap: 28px;
+      text-transform: uppercase;
+      position: fixed;
+      bottom: 26px;
+      right: 48px;
+      z-index: 200
+    }
+
+    /* ─── HUD ────────────────────────────────────────────────────────── */
+    .hud {
+      position: fixed;
+      top: 26px;
+      z-index: 200;
+      display: flex;
+      gap: 22px
+    }
+
+    #hud-l {
+      right: 48px;
+      top: 56px
+    }
+
+    .hi {
+      display: flex;
+      flex-direction: column;
+      gap: 3px
+    }
+
+    .hl {
+      font-size: 7px;
+      letter-spacing: 3px;
+      color: rgba(255, 255, 255, .2);
+      text-transform: uppercase
+    }
+
+    .hv {
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: rgba(255, 255, 255, .5)
+    }
+
+    /* ─── SOUND BTN ──────────────────────────────────────────────────── */
+    #snd {
+      position: fixed;
+      top: 22px;
+      right: 44px;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: rgba(255, 255, 255, .3);
+      text-transform: uppercase
+    }
+
+    .sp {
+      width: 34px;
+      height: 18px;
+      border-radius: 9px;
+      border: 1px solid rgba(255, 255, 255, .15);
+      position: relative;
+      background: rgba(255, 255, 255, .03)
+    }
+
+    .sd {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .7);
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      transition: right .3s, background .3s
+    }
+
+    #snd.off .sd {
+      right: 18px;
+      background: rgba(255, 255, 255, .2)
+    }
+
+    #snd.off #st {
+      opacity: .3
+    }
+
+    /* ─── PROGRESS DOTS ─────────────────────────────────────────────── */
+    #dots {
+      position: fixed;
+      left: 26px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 14px
+    }
+
+    .dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .15);
+      transition: all .5s;
+      cursor: pointer
+    }
+
+    .dot.on {
+      background: #fff;
+      box-shadow: 0 0 6px rgba(255, 255, 255, .4)
+    }
+
+    /* ─── SCROLL CUE ─────────────────────────────────────────────────── */
+    #scrl {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 9px;
+      transition: opacity .7s
+    }
+
+    #scrl.gone {
+      opacity: 0;
+      pointer-events: none
+    }
+
+    .spl {
+      width: 20px;
+      height: 32px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, .18);
+      display: flex;
+      justify-content: center;
+      padding-top: 6px
+    }
+
+    .spi {
+      width: 2px;
+      height: 7px;
+      border-radius: 1px;
+      background: rgba(255, 255, 255, .35);
+      animation: sDown 1.9s ease-in-out infinite
+    }
+
+    @keyframes sDown {
+      0% {
+        transform: translateY(0);
+        opacity: 1
+      }
+
+      100% {
+        transform: translateY(7px);
+        opacity: 0
+      }
+    }
+
+    .slb {
+      font-size: 8px;
+      letter-spacing: 5px;
+      color: rgba(255, 255, 255, .18);
+      text-transform: uppercase
+    }
+
+    /* ─── DATA BOXES ─────────────────────────────────────────────────── */
+    .dbox {
+      position: fixed;
+      z-index: 200;
+      opacity: 0;
+      transition: opacity .8s;
+      pointer-events: none
+    }
+
+    #db-e {
+      bottom: 44px;
+      right: 46px
+    }
+
+    #db-m {
+      bottom: 44px;
+      left: 46px
+    }
+
+    .dbt {
+      font-size: 7px;
+      letter-spacing: 4px;
+      color: rgba(255, 255, 255, .22);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, .07)
+    }
+
+    .dbr {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      font-size: 9px;
+      line-height: 2.1;
+      letter-spacing: 1px
+    }
+
+    .dbk {
+      color: rgba(255, 255, 255, .25)
+    }
+
+    .dbv {
+      color: rgba(255, 255, 255, .55)
+    }
+
+    /* ─── PANELS ─────────────────────────────────────────────────────── */
+    .panel {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0
+    }
+
+    .pc {
+      text-align: center;
+      max-width: 660px;
+      padding: 0 32px
+    }
+
+    .pe {
+      display: block;
+      font-size: 8px;
+      letter-spacing: 7px;
+      color: rgba(255, 255, 255, .28);
+      text-transform: uppercase;
+      margin-bottom: 18px
+    }
+
+    .pt {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(46px, 7.5vw, 96px);
+      line-height: 1.04;
+      color: #fff;
+      margin-bottom: 14px;
+      letter-spacing: -1.5px
+    }
+
+    .pt i {
+      font-style: italic;
+      color: rgba(255, 255, 255, .5)
+    }
+
+    .pr {
+      width: 28px;
+      height: 1px;
+      background: rgba(255, 255, 255, .2);
+      margin: 20px auto
+    }
+
+    .ps {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-weight: 300;
+      color: rgba(255, 255, 255, .4);
+      line-height: 1.75;
+      letter-spacing: .3px
+    }
+
+    .pb {
+      display: inline-block;
+      margin-top: 32px;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .4);
+      border: 1px solid rgba(255, 255, 255, .15);
+      padding: 12px 30px;
+      border-radius: 32px;
+      background: none;
+      cursor: pointer;
+      pointer-events: all;
+      transition: all .4s
+    }
+
+    .pb:hover {
+      color: #fff;
+      border-color: rgba(255, 255, 255, .4)
+    }
+
+    /* ─── CINEMATIC VIGNETTE (isolation phase) ───────────────────────── */
+    #vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 6;
+      pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 28%, rgba(0, 0, 0, 0.94) 100%);
+      opacity: 0;
+      transition: opacity 1.8s ease;
+    }
+
+    /* ─── ASTRONAUT IDENTITY BADGE ───────────────────────────────────── */
+    #astro-badge {
+      position: fixed;
+      bottom: 44px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      opacity: 0;
+      transition: opacity 1.2s;
+      pointer-events: none;
+      text-align: center;
+    }
+
+    .ab-label {
+      font-size: 7px;
+      letter-spacing: 5px;
+      color: rgba(255, 255, 255, .16);
+      text-transform: uppercase
+    }
+
+    .ab-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px;
+      font-weight: 300;
+      color: rgba(255, 255, 255, .32);
+      letter-spacing: 3px;
+      margin-top: 5px
+    }
+
+    /* ─── GRAIN ──────────────────────────────────────────────────────── */
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      opacity: .022;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px 180px
+    }
+
+    /* ─── GLASSMORPHISM HOVER CARD ────────────────────────────────────── */
+    .glass-card {
+      position: fixed;
+      min-width: 220px;
+      max-width: 280px;
+      padding: 16px 20px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.85);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      opacity: 0;
+      transform: translateY(10px) scale(0.96);
+      transition: all 0.4s cubic-bezier(.2, .8, .2, 1);
+      pointer-events: none;
+      z-index: 300
+    }
+
+    .glass-card.show {
+      opacity: 1;
+      transform: translateY(0) scale(1)
+    }
+
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.15), transparent 60%);
+      opacity: 0.4;
+      pointer-events: none
+    }
+
+    .gc-title {
+      font-size: 8px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.3);
+      margin-bottom: 8px
+    }
+
+    .gc-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-weight: 300;
+      color: #fff;
+      margin-bottom: 10px;
+      letter-spacing: 1px
+    }
+
+    .gc-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 10px;
+      line-height: 2;
+      letter-spacing: .5px
+    }
+
+    .gc-key {
+      color: rgba(255, 255, 255, 0.35)
+    }
+
+    .gc-val {
+      color: rgba(255, 255, 255, 0.7)
+    }
+
+    .gc-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.35);
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      line-height: 1.6
+    }
+
+    /* ─── JOURNEY GRAPH ──────────────────────────────────────────────── */
+    #graph-box {
+      position: fixed;
+      bottom: 40px;
+      left: 40px;
+      z-index: 200;
+      width: 220px;
+      padding: 14px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      opacity: 0;
+      transition: opacity .8s;
+      pointer-events: none
+    }
+
+    #graph-box .gb-title {
+      font-size: 7px;
+      letter-spacing: 4px;
+      color: rgba(255, 255, 255, 0.22);
+      text-transform: uppercase;
+      margin-bottom: 8px
+    }
+
+    #graph-box canvas {
+      width: 100%;
+      height: 70px;
+      display: block;
+      border-radius: 6px
+    }
+
+    #graph-box .gb-legend {
+      display: flex;
+      justify-content: space-between;
+      font-size: 8px;
+      color: rgba(255, 255, 255, 0.2);
+      margin-top: 6px;
+      letter-spacing: 1px
+    }
+
+    @media(max-width:768px) {
+      nav {
+        padding: 18px 24px
+      }
+
+      .nr {
+        display: none
+      }
+
+      #dots {
+        display: none
+      }
+
+      .hud {
+        display: none
+      }
+
+      .pt {
+        font-size: 48px
+      }
+
+      .glass-card {
+        display: none
+      }
+
+      #graph-box {
+        display: none
+      }
+    }
