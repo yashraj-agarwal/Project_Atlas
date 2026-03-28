@@ -314,7 +314,7 @@
     const gltfLoader = new THREE.GLTFLoader();
     let earthModel;
 
-    gltfLoader.load('./realistic_3d_earth_model_with_4k_textures.glb', (gltf) => {
+    gltfLoader.load('./models/realistic_3d_earth_model_with_4k_textures.glb', (gltf) => {
       earthModel = gltf.scene;
       earthModel.scale.set(1.4, 1.4, 1.4);
       earthModel.rotation.z = 0.41;
@@ -338,7 +338,7 @@
     const marsGroup = new THREE.Group();
     let marsModel;
 
-    gltfLoader.load('./mars_the_red_planet_free.glb', (gltf) => {
+    gltfLoader.load('./models/mars_the_red_planet_free.glb', (gltf) => {
       marsModel = gltf.scene;
       marsModel.scale.set(1.1, 1.1, 1.1);
       marsModel.traverse((child) => {
@@ -387,7 +387,7 @@
     moonGroup.position.set(3.2, 0.3, 0);
     moonOrbit.add(moonGroup);
     let moonModel = null;
-    gltfLoader.load('./moon.glb', (gltf) => {
+    gltfLoader.load('./models/moon.glb', (gltf) => {
       moonModel = gltf.scene;
       moonModel.scale.set(1.4, 1.4, 1.4);
       moonModel.traverse(c => { if (c.isMesh) { if (c.material.map) c.material.map.colorSpace = THREE.SRGBColorSpace; c.material.roughness = 1.0; c.material.metalness = 0; c.material.needsUpdate = true; } });
@@ -404,7 +404,7 @@
     satGroup.position.set(2.8, 0.5, 1.2);
     satOrbit.add(satGroup);
     let satModel = null;
-    gltfLoader.load('./space_satellite.glb', (gltf) => {
+    gltfLoader.load('./models/space_satellite.glb', (gltf) => {
       satModel = gltf.scene;
       satModel.scale.set(0.12, 0.12, 0.12);
       satModel.traverse(c => { if (c.isMesh) { if (c.material.map) c.material.map.colorSpace = THREE.SRGBColorSpace; c.material.needsUpdate = true; } });
@@ -421,7 +421,7 @@
     voyGroup.position.set(-1.5, 1.2, 3.0);
     voyOrbit.add(voyGroup);
     let voyModel = null;
-    gltfLoader.load('./voyager_3d_printable.glb', (gltf) => {
+    gltfLoader.load('./models/voyager_3d_printable.glb', (gltf) => {
       voyModel = gltf.scene;
       voyModel.scale.set(0.006, 0.006, 0.006);
       voyModel.traverse(c => { if (c.isMesh) { if (c.material.map) c.material.map.colorSpace = THREE.SRGBColorSpace; c.material.needsUpdate = true; } });
@@ -470,8 +470,7 @@
     let astronautModel = null;
     let astronautReady = false;
 
-    gltfLoader.load(
-      './animated_floating_astronaut_in_space_suit_loop.glb',
+    gltfLoader.load('./models/animated_floating_astronaut_in_space_suit_loop.glb',
       (gltf) => {
         astronautModel = gltf.scene;
         astronautModel.scale.set(ASTRO_SCALE, ASTRO_SCALE, ASTRO_SCALE);
