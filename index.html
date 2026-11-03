@@ -403,6 +403,16 @@
     renderer.toneMappingExposure = 1.6;
 
     const scene = new THREE.Scene();
+    // The scene root never moves. Keep it from invalidating every world matrix.
+    scene.matrixAutoUpdate = false;
+
+    function freezeLocalTransforms(root, keepRootMoving = false) {
+      root.traverse((object) => {
+        if (object === root && keepRootMoving) return;
+        object.updateMatrix();
+        object.matrixAutoUpdate = false;
+      });
+    }
     const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, .01, 800);
 
     window.addEventListener('resize', () => {
@@ -528,6 +538,7 @@
           child.material.needsUpdate = true;
         }
       });
+      freezeLocalTransforms(earthModel, true);
       earthGroup.add(earthModel);
       criticalLoaded++;
       if (criticalLoaded >= criticalTotal) startExperience();
@@ -557,6 +568,7 @@
         marsModel = gltf.scene;
         marsModel.scale.set(1.1, 1.1, 1.1);
         marsModel.traverse((c) => { if (c.isMesh) { if (c.material.map) c.material.map.colorSpace = THREE.SRGBColorSpace; c.material.roughness = 1; c.material.metalness = 0; } });
+        freezeLocalTransforms(marsModel, true);
         marsGroup.add(marsModel);
       }, undefined, (err) => console.error('Mars Background GLB:', err));
 
@@ -571,6 +583,7 @@
             if (c.material.emissive) { c.material.emissive.setHex(0x222222); c.material.emissiveIntensity = 0.4; }
           } 
         });
+        freezeLocalTransforms(moonModel);
         moonGroup.add(moonModel);
       }, undefined, e => console.warn('Moon Background GLB:', e));
 
@@ -579,6 +592,7 @@
         satModel = gltf.scene;
         satModel.scale.set(0.14, 0.14, 0.14);
         satModel.traverse(c => { if (c.isMesh) { if (c.material.map) c.material.map.colorSpace = THREE.SRGBColorSpace; } });
+        freezeLocalTransforms(satModel);
         satGroup.add(satModel);
       }, undefined, e => console.warn('Satellite Background GLB:', e));
 
@@ -587,6 +601,7 @@
         voyModel = gltf.scene;
         voyModel.scale.set(0.003, 0.003, 0.003);
         voyModel.traverse(c => { if (c.isMesh) { if (c.material.map) c.material.map.colorSpace = THREE.SRGBColorSpace; } });
+        freezeLocalTransforms(voyModel);
         voyGroup.add(voyModel);
       }, undefined, e => console.warn('Voyager Background GLB:', e));
     }
@@ -781,6 +796,7 @@
           }
         });
 
+        freezeLocalTransforms(astronautModel);
         astronautGroup.add(astronautModel);
         astronautReady = true;
         criticalLoaded++;
@@ -828,6 +844,12 @@
 
     let scrollP = 0; // shared with render loop
 
+    const hudDistance = document.getElementById('hA');
+    const hudTemperature = document.getElementById('hT');
+    const hudPhase = document.getElementById('hP');
+    const clearColor = new THREE.Color();
+    let previousStage = -1;
+
     function setHUD(p) {
       scrollP = p;
       const si = Math.min(Math.floor(p * NS), NS - 1);
@@ -841,9 +863,10 @@
       const totalDistance = 225;
       const currentDistance = (p * totalDistance).toFixed(1);
 
-      document.getElementById('hT').textContent = TEMPS[si];
-      document.getElementById('hA').textContent = currentDistance + "M km";
-      document.getElementById('hP').textContent = PHASES[si];
+      const distanceLabel = currentDistance + 'M km';
+      if (hudDistance.textContent !== distanceLabel) hudDistance.textContent = distanceLabel;
+      if (hudTemperature.textContent !== TEMPS[si]) hudTemperature.textContent = TEMPS[si];
+      if (hudPhase.textContent !== PHASES[si]) hudPhase.textContent = PHASES[si];
 
       // Data boxes
       document.getElementById('db-e').style.opacity = p < .13 ? 1 : p < .16 ? (0.16 - p) / .03 : 0;
@@ -852,12 +875,13 @@
       // Scroll cue
       if (p > .05) document.getElementById('scrl').classList.add('gone');
 
-      // Nav dots
-      wraps.forEach((wrap, i) => {
-        wrap.classList.toggle('active', i === si);
-        const d = wrap.querySelector('.dot');
-        if (d) d.classList.toggle('on', i === si);
-      });
+      if (si !== previousStage) {
+        wraps.forEach((wrap, i) => {
+          wrap.classList.toggle('active', i === si);
+          wrap.querySelector('.dot')?.classList.toggle('on', i === si);
+        });
+        previousStage = si;
+      }
 
       // Panel fade in/out
       pIDs.forEach((id, i) => {
@@ -890,7 +914,7 @@
 
       // Background warm tint near Mars
       const rc = p > .45 ? Math.min(1, (p - .45) / .3) * .012 : 0;
-      renderer.setClearColor(new THREE.Color(rc * .6, rc * .18, 0), 1);
+      renderer.setClearColor(clearColor.setRGB(rc * .6, rc * .18, 0), 1);
     }
 
     const D = 14;
@@ -1048,9 +1072,11 @@
       }
 
       // Raycasting for hover — throttled to every 3rd frame
-      if (hoverEnabled && frameCount % 3 === 0) updateHover();
+      if (frameCount % 3 === 0 && ((desktopViewport.matches && mouseInScene) || hoveredObj)) {
+        updateHover();
+      }
 
-      if (frameCount % 2 === 0 && p !== lastGraphProgress) {
+      if (desktopViewport.matches && frameCount % 2 === 0 && p !== lastGraphProgress) {
         lastGraphProgress = p;
         const opacity = p > 0.08 && p < 0.88
           ? Math.min(1, (p - 0.08) / 0.04)
@@ -1059,7 +1085,7 @@
         if (opacity > 0) drawGraph(p);
       }
 
-      updateCursor();
+      if (desktopViewport.matches) updateCursor();
       renderer.render(scene, camera);
     }
 
@@ -1130,7 +1156,13 @@
     // ════════════════════════════════════════════════════════════════════
     // RAYCASTING HOVER + GLASSMORPHISM CARDS (desktop only)
     // ════════════════════════════════════════════════════════════════════
-    var hoverEnabled = window.innerWidth > 768;
+    const desktopViewport = matchMedia('(width > 768px)');
+    desktopViewport.addEventListener('change', () => { lastGraphProgress = -1; });
+    let mouseInScene = false;
+    document.addEventListener('pointerleave', () => {
+      mouseInScene = false;
+      mouse2D.set(-2, -2);
+    });
     const raycaster = new THREE.Raycaster();
     const mouse2D = new THREE.Vector2(-9, -9);
     let hoveredObj = null;
@@ -1209,7 +1241,8 @@
 
     // Mouse tracking for card position
     document.addEventListener('mousemove', e => {
-      if (!hoverEnabled) return;
+      if (!desktopViewport.matches) return;
+      mouseInScene = true;
       mouse2D.x = (e.clientX / window.innerWidth) * 2 - 1;
       mouse2D.y = -(e.clientY / window.innerHeight) * 2 + 1;
       // Position card
@@ -1221,9 +1254,14 @@
 
     const interactiveTargets = [earthGroup, marsGroup, astronautGroup, moonGroup, satGroup, voyGroup];
 
+    const hoverHits = [];
+
     function updateHover() {
+      hoverHits.length = 0;
       raycaster.setFromCamera(mouse2D, camera);
-      const intersects = raycaster.intersectObjects(interactiveTargets, true);
+      const intersects = desktopViewport.matches && mouseInScene
+        ? raycaster.intersectObjects(interactiveTargets, true, hoverHits)
+        : hoverHits;
 
       if (intersects.length > 0) {
         const hit = intersects[0].object;
@@ -1270,42 +1308,56 @@
     var graphCanvas = document.getElementById('graph-canvas');
     var gCtx = graphCanvas ? graphCanvas.getContext('2d') : null;
 
-    function drawGraph(p) {
-      if (!gCtx) return;
+    let graphBackground;
+
+    function buildGraphBackground() {
+      const background = document.createElement('canvas');
+      background.width = graphCanvas.width;
+      background.height = graphCanvas.height;
+      const ctx = background.getContext('2d');
       const W = graphCanvas.width, H = graphCanvas.height;
-      gCtx.clearRect(0, 0, W, H);
 
       // Gradient background
-      const grad = gCtx.createLinearGradient(0, 0, W, 0);
+      const grad = ctx.createLinearGradient(0, 0, W, 0);
       grad.addColorStop(0, 'rgba(34, 119, 204, 0.15)');
       grad.addColorStop(1, 'rgba(170, 53, 5, 0.15)');
-      gCtx.fillStyle = grad;
-      gCtx.fillRect(0, 0, W, H);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, W, H);
 
       // Distance curve
-      gCtx.beginPath();
-      gCtx.strokeStyle = 'rgba(255,255,255,0.35)';
-      gCtx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+      ctx.lineWidth = 1.5;
       for (let i = 0; i <= 50; i++) {
         const x = (i / 50) * W;
         const t = i / 50;
         const y = H - 10 - (Math.pow(t, 0.7) * (H - 20));
-        i === 0 ? gCtx.moveTo(x, y) : gCtx.lineTo(x, y);
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
-      gCtx.stroke();
+      ctx.stroke();
 
       // Speed curve
-      gCtx.beginPath();
-      gCtx.strokeStyle = 'rgba(255, 120, 50, 0.4)';
-      gCtx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(255, 120, 50, 0.4)';
+      ctx.lineWidth = 1;
       for (let i = 0; i <= 50; i++) {
         const x = (i / 50) * W;
         const t = i / 50;
         const speed = t < 0.15 ? t / 0.15 : (t > 0.8 ? 1 - (t - 0.8) / 0.2 : 1);
         const y = H - 10 - (speed * (H - 30) * 0.7);
-        i === 0 ? gCtx.moveTo(x, y) : gCtx.lineTo(x, y);
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
-      gCtx.stroke();
+      ctx.stroke();
+
+      return background;
+    }
+
+    function drawGraph(p) {
+      if (!gCtx) return;
+      graphBackground ??= buildGraphBackground();
+      const W = graphCanvas.width, H = graphCanvas.height;
+      gCtx.clearRect(0, 0, W, H);
+      gCtx.drawImage(graphBackground, 0, 0);
 
       // Progress marker
       const px = p * W;
