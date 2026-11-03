@@ -205,7 +205,6 @@
     const ldf = document.getElementById('ldf');
     const loadingScreen = document.getElementById('ld');
     const loadingText = document.querySelector('.ld-t');
-    const loadingStartTime = Date.now();
 
     const phrases = [
       "Initializing Mission Atlas 2047",
@@ -227,7 +226,6 @@
 
     function startExperience() {
       if (experienceStarted) return;
-      const elapsed = Date.now() - loadingStartTime;
       
       /* CSS Injection for Navigation Dots */
       const style = document.createElement('style');
@@ -269,16 +267,10 @@
       `;
       document.head.appendChild(style);
 
-      const minLoadTime = 3000; // Enforce 3s minimum duration
-      
-      if (elapsed < minLoadTime) {
-        setTimeout(startExperience, minLoadTime - elapsed);
-        return;
-      }
-
       experienceStarted = true;
       clearInterval(phraseInterval);
       loadingText.textContent = "All Systems Ready";
+      ldf.style.width = "100%";
       setTimeout(() => {
         loadingScreen.style.opacity = '0';
         setTimeout(() => loadingScreen.style.display = 'none', 1200);
@@ -288,7 +280,7 @@
         
         // Start Audio Context
         if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-      }, 500);
+      }, 150);
     }
 
     // ════════════════════════════════════════════════════════════════════
@@ -1010,9 +1002,9 @@
     const lookPt = new THREE.Vector3();
     const gboxEl = document.getElementById('graph-box'); // cache outside loop
     let frameCount = 0;
+    let lastGraphProgress = -1;
 
     function animate() {
-      requestAnimationFrame(animate);
       frameCount++;
       const t = clock.getElapsedTime();
       const p = scrollP;
@@ -1050,34 +1042,84 @@
       camera.position.set(cam.px + mxS * PAR + shakeX, cam.py - myS * PAR * .6, cam.pz + shakeZ);
       lookPt.set(cam.lx, cam.ly, cam.lz);
       camera.lookAt(lookPt);
-      camera.fov = cam.fov;
-      camera.updateProjectionMatrix();
+      if (camera.fov !== cam.fov) {
+        camera.fov = cam.fov;
+        camera.updateProjectionMatrix();
+      }
 
       // Raycasting for hover — throttled to every 3rd frame
       if (hoverEnabled && frameCount % 3 === 0) updateHover();
 
-      // Graph visibility — throttled to every 2nd frame
-      if (frameCount % 2 === 0) {
-        gboxEl.style.opacity = (p > 0.08 && p < 0.88) ? Math.min(1, (p - 0.08) / 0.04) : (p >= 0.88 ? Math.max(0, 1 - (p - 0.88) / 0.04) : 0);
-        drawGraph(p);
+      if (frameCount % 2 === 0 && p !== lastGraphProgress) {
+        lastGraphProgress = p;
+        const opacity = p > 0.08 && p < 0.88
+          ? Math.min(1, (p - 0.08) / 0.04)
+          : p >= 0.88 ? Math.max(0, 1 - (p - 0.88) / 0.04) : 0;
+        gboxEl.style.opacity = opacity;
+        if (opacity > 0) drawGraph(p);
       }
 
+      updateCursor();
       renderer.render(scene, camera);
     }
-    animate();
+
+    let animationFrame = null;
+    let contextLost = false;
+
+    function scheduleAnimation() {
+      if (animationFrame !== null || document.hidden || contextLost) return;
+      animationFrame = requestAnimationFrame(() => {
+        animationFrame = null;
+        animate();
+        scheduleAnimation();
+      });
+    }
+
+    function stopAnimation() {
+      if (animationFrame !== null) cancelAnimationFrame(animationFrame);
+      animationFrame = null;
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopAnimation();
+      else scheduleAnimation();
+    });
+
+    renderer.domElement.addEventListener('webglcontextlost', (event) => {
+      event.preventDefault();
+      contextLost = true;
+      stopAnimation();
+    });
+
+    renderer.domElement.addEventListener('webglcontextrestored', () => {
+      contextLost = false;
+      scheduleAnimation();
+    });
+
+    scheduleAnimation();
 
     // ════════════════════════════════════════════════════════════════════
     // CURSOR
     // ════════════════════════════════════════════════════════════════════
     const cdEl = document.getElementById('cd'), crEl = document.getElementById('cr');
     let cx = window.innerWidth / 2, cy = window.innerHeight / 2, rx = cx, ry = cy;
-    document.addEventListener('mousemove', e => { cx = e.clientX; cy = e.clientY; });
-    (function loop() {
-      rx += (cx - rx) * .1; ry += (cy - ry) * .1;
-      cdEl.style.left = cx + 'px'; cdEl.style.top = cy + 'px';
-      crEl.style.left = rx + 'px'; crEl.style.top = ry + 'px';
-      requestAnimationFrame(loop);
-    })();
+    cdEl.style.left = crEl.style.left = cx + 'px';
+    cdEl.style.top = crEl.style.top = cy + 'px';
+    document.addEventListener('mousemove', e => {
+      cx = e.clientX;
+      cy = e.clientY;
+      cdEl.style.left = cx + 'px';
+      cdEl.style.top = cy + 'px';
+    });
+
+    function updateCursor() {
+      if (rx === cx && ry === cy) return;
+      rx = Math.abs(cx - rx) < .1 ? cx : rx + (cx - rx) * .1;
+      ry = Math.abs(cy - ry) < .1 ? cy : ry + (cy - ry) * .1;
+      crEl.style.left = rx + 'px';
+      crEl.style.top = ry + 'px';
+    }
+
     document.querySelectorAll('button,.dot,.pb').forEach(el => {
       el.addEventListener('mouseenter', () => document.body.classList.add('h'));
       el.addEventListener('mouseleave', () => document.body.classList.remove('h'));
